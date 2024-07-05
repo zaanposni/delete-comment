@@ -7,7 +7,8 @@ async function run(): Promise<void> {
   )
   try {
     const token: string = core.getInput('github_token')
-    const userNames: string[] = core.getInput('delete_user_name').split(";")
+    const rawUserNames: string = core.getInput('delete_user_name')
+    const userNames: string[] = rawUserNames.split(";")
     const bodyRegex: string = core.getInput('body_regex')
     const issueNumber: number = parseInt(core.getInput('issue_number'))
     const octokit = github.getOctokit(token)
@@ -19,9 +20,13 @@ async function run(): Promise<void> {
         issue_number: issue
       })
 
+      console.log(`Found ${resp.data.length} total comments`)
+
       const comments = resp.data.filter(
         it => it.user?.login && userNames.includes(it.user.login) && it.body?.match(bodyRegex)
       )
+      
+      console.log(`Found ${comments.length} comments by users '${rawUserNames}'`)
 
       for (const comment of comments) {
         console.log(
