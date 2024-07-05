@@ -20,7 +20,7 @@ async function run(): Promise<void> {
       })
 
       const comments = resp.data.filter(
-        it => userNames.includes(it.user?.login) && it.body?.match(bodyRegex)
+        it => it.user?.login && userNames.includes(it.user.login) && it.body?.match(bodyRegex)
       )
 
       for (const comment of comments) {
